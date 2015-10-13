@@ -16,24 +16,20 @@ class GmailConfiguration:
         self.driver = None
 
     def run(self):
-        self.before()
         for account in self.accounts:
-            self.act(account)
-        self.after()
+            agent_options = GmailConfiguration.select_agent()
+            self.initialize_driver(agent_options)
 
-    def before(self):
-        agent_options = GmailConfiguration.select_agent()
-        self.initialize_driver(agent_options)
+            self.act(account)
+
+            self.driver.quit()
 
     def act(self, account):
         if self.login(account):
             self.configure_settings()
             self.logout()
-        self.clear_chrome_history()
+        # self.clear_chrome_history()
         sleep(8)
-
-    def after(self):
-        self.driver.quit()
 
     @staticmethod
     def select_agent():
@@ -174,10 +170,8 @@ class GmailConfiguration:
 
 
 def main():
-    accounts = [["cheng6dindin@gmail.com", "c7654321"],
-                ["symboliz30670@gmail.com", "wuay1fjnxi7"],
-                ["Ola.42887914@gmail.com", "wt4tn2ipvimo"]
-                ]
+    accounts_str = file(u"帳號列表.txt", 'r').read().split("\n")[1:]
+    accounts = map(lambda string: string.split(" ", 1), accounts_str)
 
     gmail_config_obj = GmailConfiguration(accounts)
     gmail_config_obj.run()
@@ -185,9 +179,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# self.driver.get('http://www.google.com')
-# self.driver.quit()
-
-# 自己申請新帳號測試
